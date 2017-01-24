@@ -14,8 +14,8 @@ supported Server-OS: anything where Go can compile and run
 
 Status:
 - [x] started
-- [ ] fully implement a simple server
-
+- [x] fully implement a simple server
+- [ ] specify a client
 
 
 Possible Future Features:

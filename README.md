@@ -13,8 +13,8 @@ planned Clients:
 supported Server-OS: anything where Go can compile and run
 
 Status:
-- [ ] started
-- [ ] 
+- [x] started
+- [ ] fully implement a simple server
 
 
 
@@ -23,3 +23,4 @@ Possible Future Features:
     - [ ] commandline client with direct access to the server
 - [ ] make it more secure (mostly auth)
 - [ ] save/transmit a history of messages
+- [ ] be able to transmit more than just text

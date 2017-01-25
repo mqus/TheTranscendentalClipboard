@@ -1,9 +1,9 @@
-# TheTranscendentalClipboard - Server
+# transcendental
 
 Goal: to write a very simple server which will 
 synchronize all clipboard messages of clients.
 Authentification: via a small user-chosen token (yes, isn't that secure)
-Transport Security: tls over tcp
+Transport Security: Future:tls over tcp Currently: base64 ;)
 
 planned Clients: 
 - Linux
@@ -15,12 +15,17 @@ supported Server-OS: anything where Go can compile and run
 Status:
 - [x] started
 - [x] fully implement a simple server
-- [ ] specify a client
-
+- [x] a simple example client implemented (send/rcv)
+    - [ ] read from clipboard + detect changes
+    - [ ] write to clipboard
+- [ ] specify the client
+possible library (for simple text passing):
+    https://github.com/atotto/clipboard
 
 Possible Future Features:
+- [ ] be able to transmit more than just text
+    - [ ] Look up specifications on Windows, Android and X11 Clipboard Mechanisms with different MIME-types
+- [ ] make it more secure (mostly auth)
 - [ ] save clipboard messages
     - [ ] commandline client with direct access to the server
-- [ ] make it more secure (mostly auth)
 - [ ] save/transmit a history of messages
-- [ ] be able to transmit more than just text

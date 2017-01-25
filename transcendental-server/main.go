@@ -3,8 +3,9 @@ package main
 import "fmt"
 import "net"
 import "log"
-import "github.com/mqus/TheTranscendentalClipboard-Server/srv"
 import "time"
+
+//import "github.com/mqus/transcendental/srv"
 
 func main() {
 	fmt.Println(log.Prefix(), "Hi!")
@@ -31,5 +32,5 @@ func handleNewConnection(conn *net.TCPConn) {
 	conn.SetKeepAlive(true)
 	conn.SetKeepAlivePeriod(30 * time.Second)
 	conn.SetNoDelay(true)
-	srv.AddClient(conn)
+	AddClient(conn)
 }

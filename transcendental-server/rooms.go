@@ -1,4 +1,4 @@
-package srv
+package main
 
 import (
 	"errors"
@@ -6,7 +6,7 @@ import (
 	"net"
 	"sync"
 
-	"github.com/mqus/TheTranscendentalClipboard-Server/common"
+	"github.com/mqus/transcendental/common"
 )
 
 // A Room knows all the clients which share the same Clipboard.
@@ -36,12 +36,13 @@ var (
 // assigning the Client to the room.
 func AddClient(conn *net.TCPConn) {
 	tc := common.NewPkgConn(conn)
-
+	//conn.SetReadDeadline(time.Now().Add(time.Minute))
 	pkg := tc.RecvPkg()
 	if tc.IsClosed {
 		log.Println("Client was closed before the room was assigned... suspicious...")
 		return
 	}
+	log.Println("type", pkg.Type, "|content", string(pkg.Content))
 	if pkg.Type != "hello" {
 		tc.Close()
 		log.Println("Client sent the wrong first message:", pkg)
@@ -109,6 +110,7 @@ func (c *Client) recvLoop() {
 
 func waitForClosing(c *Client) {
 	//Wait till PkgConn has closed the connection and then close from this end.
+	c.conn.CanClose.L.Lock()
 	c.conn.CanClose.Wait()
 	if c.room != nil {
 		//delete client from room
@@ -129,4 +131,5 @@ func waitForClosing(c *Client) {
 		}
 		c.room.mutex.RUnlock()*/
 	}
+	c.conn.CanClose.L.Unlock()
 }

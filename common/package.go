@@ -2,6 +2,7 @@ package common
 
 import (
 	"encoding/json"
+	"log"
 	"net"
 	"sync"
 	"time"
@@ -24,12 +25,12 @@ type PkgConn struct {
 }
 
 func NewPkgConn(conn *net.TCPConn /*, closer func(*PkgConn)*/) *PkgConn {
-	conn.SetReadDeadline(time.Now().Add(time.Minute))
 	return &PkgConn{
 		conn:     conn,
 		dec:      json.NewDecoder(conn),
 		enc:      json.NewEncoder(conn),
 		IsClosed: false,
+		CanClose: sync.NewCond(&sync.Mutex{}),
 		//closefn:  closer,
 	}
 }
@@ -39,6 +40,7 @@ func NewPkgConn(conn *net.TCPConn /*, closer func(*PkgConn)*/) *PkgConn {
 //type is one of {<close>, <join>, <msg>, <ping>}
 func (c *PkgConn) SendPkg(p *Pkg) {
 	if c.IsClosed {
+		log.Println("conn is closed before send")
 		return
 	}
 
@@ -46,17 +48,21 @@ func (c *PkgConn) SendPkg(p *Pkg) {
 
 	err := c.enc.Encode(p)
 	if err != nil {
+		log.Println("conn-s is weird", err, "|", p)
 		c.Close()
 	}
 
 }
 
 func (c *PkgConn) RecvPkg() (p *Pkg) {
+	p = new(Pkg)
 	if c.IsClosed {
+		log.Println("conn is closed before rcv")
 		return nil
 	}
 	err := c.dec.Decode(p)
 	if err != nil {
+		log.Println("conn-r is weird", err, "|", p)
 		c.Close()
 	}
 	return

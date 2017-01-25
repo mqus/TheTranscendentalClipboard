@@ -19,6 +19,7 @@ Status:
     - [ ] read from clipboard + detect changes
     - [ ] write to clipboard
 - [ ] specify the client
+- [ ] write tests
 possible library (for simple text passing):
     https://github.com/atotto/clipboard
 

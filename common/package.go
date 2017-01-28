@@ -11,8 +11,9 @@ import (
 //Pkg is the unit in which messages are transferred
 //between the clients and the server.
 type Pkg struct {
-	Type    string
-	Content []byte
+	ClientID int
+	Type     string
+	Content  []byte
 }
 
 type PkgConn struct {

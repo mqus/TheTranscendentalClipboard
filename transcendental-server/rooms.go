@@ -43,7 +43,7 @@ func AddClient(conn *net.TCPConn) {
 		return
 	}
 	log.Println("type", pkg.Type, "|content", string(pkg.Content))
-	if pkg.Type != "hello" {
+	if pkg.Type != "Hello" {
 		tc.Close()
 		log.Println("Client sent the wrong first message:", pkg)
 		return
@@ -95,15 +95,43 @@ func (c *Client) recvLoop() {
 		if c.conn.IsClosed {
 			return
 		}
-		if pkg.Type != "pkg" {
+
+		switch pkg.Type {
+		//deprecated: msg message (should be handled the same as Text)
+		case "msg":
+			fallthrough
+		case "Text":
+			fallthrough
+		case "Copy":
+			//safely read all currently connected clients
 			c.room.mutex.RLock()
 			clients := c.room.clients
 			c.room.mutex.RUnlock()
-			for id, client := range clients {
-				if id != c.id {
+
+			//Write FromID to the pkg
+			pkg.ClientID = c.id
+
+			//relay package to all other clients
+			for toID, client := range clients {
+				if toID != c.id {
 					client.conn.SendPkg(pkg)
 				}
 			}
+
+		case "Request":
+			fallthrough
+		case "Data":
+			fallthrough
+		case "Reject":
+			//safely get client to send package to
+			c.room.mutex.RLock()
+			to := c.room.clients[pkg.ClientID]
+			c.room.mutex.RUnlock()
+
+			//Write FromID to the pkg
+			pkg.ClientID = c.id
+
+			to.conn.SendPkg(pkg)
 		}
 	}
 }

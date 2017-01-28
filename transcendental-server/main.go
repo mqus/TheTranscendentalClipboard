@@ -8,6 +8,7 @@ import "time"
 //import "github.com/mqus/transcendental/srv"
 
 func main() {
+	log.Println("starting up transcendental-server v0.1")
 	fmt.Println(log.Prefix(), "Hi!")
 	//ln, err := net.Listen("tcp", ":19192")
 	addr, err := net.ResolveTCPAddr("tcp", ":19192")

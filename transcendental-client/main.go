@@ -17,6 +17,7 @@ var c *common.PkgConn
 var maxRetryTime = time.Second * 30
 
 func main() {
+	log.Println("starting up transcendental-client v0.1")
 	room = "Raum1"
 	server = "localhost:19192"
 	if len(os.Args) > 1 {
@@ -95,7 +96,7 @@ func handleRecv(recv chan<- []byte) {
 			fmt.Println("-recvReconnectDone")
 		} else {
 			fmt.Println("-recvPkg")
-			if pkg.Type == "msg" {
+			if pkg.Type == "Text" {
 				recv <- pkg.Content
 			}
 		}

@@ -56,11 +56,12 @@ func AddClient(conn *net.TCPConn) {
 
 	//add Client to Room and the room to the client
 	room.mutex.Lock()
-	c.id = room.maxid
 	room.maxid++
+	c.id = room.maxid
 
 	room.clients[c.id] = &c
 	c.room = room
+	log.Println("#clients in room, cid:", len(room.clients), c.id)
 
 	room.mutex.Unlock()
 	go waitForClosing(&c)
@@ -122,11 +123,18 @@ func (c *Client) recvLoop() {
 		case "Reject":
 			//safely get client to send package to
 			c.room.mutex.RLock()
-			to := c.room.clients[pkg.ClientID]
+			to, ok := c.room.clients[pkg.ClientID]
 			c.room.mutex.RUnlock()
 
-			//Write FromID to the pkg
-			pkg.ClientID = c.id
+			if !ok {
+				//if the requested Client is not there anymore, respond
+				//with the same data and ClientID set to zero
+				pkg.ClientID = 0
+				to = c
+			} else {
+				//Write FromID to the pkg
+				pkg.ClientID = c.id
+			}
 
 			to.conn.SendPkg(pkg)
 		}

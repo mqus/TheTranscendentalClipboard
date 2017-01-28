@@ -25,8 +25,8 @@ type PkgConn struct {
 	IsClosed bool
 }
 
-func NewPkgConn(conn *net.TCPConn /*, closer func(*PkgConn)*/) *PkgConn {
-	return &PkgConn{
+func NewPkgConn(conn *net.TCPConn) *PkgConn {
+	pc := &PkgConn{
 		conn:     conn,
 		dec:      json.NewDecoder(conn),
 		enc:      json.NewEncoder(conn),
@@ -34,11 +34,13 @@ func NewPkgConn(conn *net.TCPConn /*, closer func(*PkgConn)*/) *PkgConn {
 		CanClose: sync.NewCond(&sync.Mutex{}),
 		//closefn:  closer,
 	}
+
+	return pc
 }
 
 //MAYBE: change to a binary protocol by sending
-//[type(1Byte)[,size(8Byte),msg(sizeByte)]] where
-//type is one of {<close>, <join>, <msg>, <ping>}
+//[type(1Byte),clientID(4Byte),size(8Byte),msg(sizeByte)] where
+
 func (c *PkgConn) SendPkg(p *Pkg) {
 	if c.IsClosed {
 		log.Println("conn is closed before send")

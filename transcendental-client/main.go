@@ -57,7 +57,7 @@ func connectToServer() error {
 		return err
 	}
 	c = common.NewPkgConn(conn)
-	c.SendPkg(&common.Pkg{Type: "hello", Content: []byte(room)})
+	c.SendPkg(&common.Pkg{Type: "Hello", Content: []byte(room)})
 	if c.IsClosed {
 		log.Println("failed to send hello pkg")
 		return errors.New("ClosedConnection")
@@ -69,7 +69,7 @@ func handleSends(send chan []byte) {
 	for {
 		fmt.Println(" -sendPrepare")
 		data := <-send
-		pkg := &common.Pkg{Type: "msg", Content: data}
+		pkg := &common.Pkg{Type: "Text", Content: data}
 		log.Print("sending:", pkg, "...")
 		fmt.Println(" -sendStart")
 		c.SendPkg(pkg)

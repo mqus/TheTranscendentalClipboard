@@ -97,9 +97,6 @@ func (c *Client) recvLoop() {
 		}
 
 		switch pkg.Type {
-		//deprecated: msg message (should be handled the same as Text)
-		case "msg":
-			fallthrough
 		case "Text":
 			fallthrough
 		case "Copy":

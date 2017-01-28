@@ -16,12 +16,11 @@ Status:
 - [x] started
 - [x] fully implement a simple server
 - [x] a simple example client implemented (send/rcv)
-    - [ ] read from clipboard + detect changes
+    - [ ] read from clipboard + detect changes 
     - [ ] write to clipboard
 - [ ] specify the client
+- [ ] implement a Simple Java client which supports lazy-transmit and more data flavours
 - [ ] write tests
-possible library (for simple text passing):
-    https://github.com/atotto/clipboard
 
 Possible Future Features:
 - [ ] be able to transmit more than just text
@@ -30,3 +29,10 @@ Possible Future Features:
 - [ ] save clipboard messages
     - [ ] commandline client with direct access to the server
 - [ ] save/transmit a history of messages
+
+Links:
+- possible library (for simple text passing):
+    https://github.com/atotto/clipboard
+- the official java client:
+    https://github.com/mqus/transcendental-client
+    

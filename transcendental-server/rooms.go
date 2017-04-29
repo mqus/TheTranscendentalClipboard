@@ -96,7 +96,7 @@ func (c *Client) recvLoop() {
 		if c.conn.IsClosed {
 			return
 		}
-
+		log.Println("got pkg", c.id, pkg)
 		switch pkg.Type {
 		case "Text":
 			fallthrough
@@ -113,6 +113,7 @@ func (c *Client) recvLoop() {
 			for toID, client := range clients {
 				if toID != c.id {
 					client.conn.SendPkg(pkg)
+					log.Println("sentsomthg")
 				}
 			}
 

@@ -13,7 +13,7 @@ func main() {
 
 	addressString := parseArgs(os.Args[1:])
 
-	log.Println("starting up transcendental-server v0.2")
+	log.Println("starting up transcendental-server v0.3")
 
 	addr, err := net.ResolveTCPAddr("tcp", addressString)
 	if err != nil {
@@ -43,7 +43,7 @@ func parseArgs(args []string) string {
 			case "-h":
 				fallthrough
 			case "--help":
-				fmt.Println("transcendental-server v0.2, a server application for synchronizing clipboards.\n" +
+				fmt.Println("transcendental-server v0.3, a server application for synchronizing clipboards.\n" +
 					"Usage: transcendental-server [server:port] [flags]\n" +
 					"\t[server:port]\t The adress on which the server will listen on incoming connections (default: ':19192'" +
 					"\nFlags:\n" +

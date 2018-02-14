@@ -42,7 +42,7 @@ func AddClient(conn *net.TCPConn) {
 		log.Println("Client was closed before the room was assigned... suspicious...")
 		return
 	}
-	log.Println("type", pkg.Type, "|content", string(pkg.Content))
+	//	log.Println("type", pkg.Type, "|content", string(pkg.Content))
 	if pkg.Type != "Hello" {
 		tc.Close()
 		log.Println("Client sent the wrong first message:", pkg)
@@ -61,7 +61,9 @@ func AddClient(conn *net.TCPConn) {
 
 	room.clients[c.id] = &c
 	c.room = room
-	log.Println("#clients in room, cid:", len(room.clients), c.id)
+	log.Printf("Added a new Client(cid:%d,%s)\tto room %s,\tsize:%d\n",
+		c.id, c.Addr(), string(pkg.Content), len(room.clients))
+	//log.Println("#clients in room, cid:", len(room.clients), c.id)
 
 	room.mutex.Unlock()
 	go waitForClosing(&c)
@@ -142,6 +144,10 @@ func (c *Client) recvLoop() {
 	}
 }
 
+func (c *Client) Addr() string {
+	return c.conn.RemoteAddr().String()
+}
+
 func waitForClosing(c *Client) {
 	//Wait till PkgConn has closed the connection and then close from this end.
 	c.conn.CanClose.L.Lock()
@@ -151,7 +157,7 @@ func waitForClosing(c *Client) {
 		c.room.mutex.Lock()
 		delete(c.room.clients, c.id)
 		c.room.mutex.Unlock()
-
+		log.Println("closed connection of cid", c.id, "(", c.Addr(), ")")
 		//MAYBE: implement some kind of GC
 		/* IS NOT SAFE TO DO, THEREFORE COMMENTED OUT
 		c.room.mutex.RLock()

@@ -6,6 +6,7 @@ import (
 	"net"
 	"sync"
 	"time"
+	"io"
 )
 
 //Pkg is the unit in which messages are transferred
@@ -51,7 +52,9 @@ func (c *PkgConn) SendPkg(p *Pkg) {
 
 	err := c.enc.Encode(p)
 	if err != nil {
-		log.Println("conn-s is weird", err, "|", p)
+		if err != io.EOF {
+			log.Println("conn-s is weird", err, "|", p)
+		}
 		c.Close()
 	}
 
@@ -65,7 +68,9 @@ func (c *PkgConn) RecvPkg() (p *Pkg) {
 	}
 	err := c.dec.Decode(p)
 	if err != nil {
-		log.Println("conn-r is weird", err, "|", p)
+		if err != io.EOF {
+			log.Println("conn-r is weird", err, "|", p)
+		}
 		c.Close()
 	}
 	return
@@ -78,4 +83,8 @@ func (c *PkgConn) Close() {
 		c.conn.Close()
 		c.CanClose.Broadcast()
 	}
+}
+
+func (c *PkgConn) RemoteAddr() net.Addr {
+	return c.conn.RemoteAddr()
 }

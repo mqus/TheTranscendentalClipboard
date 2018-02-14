@@ -11,13 +11,13 @@ import (
 
 func main() {
 
-	addressString := parseArgs(os.Args)
+	addressString := parseArgs(os.Args[1:])
 
 	log.Println("starting up transcendental-server v0.2")
 
 	addr, err := net.ResolveTCPAddr("tcp", addressString)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Couldn't resolve address! Details:", err)
 	}
 	ln, err := net.ListenTCP("tcp", addr)
 	if err != nil {
@@ -34,6 +34,7 @@ func main() {
 	}
 
 }
+
 func parseArgs(args []string) string {
 	addressString := ":19192"
 	for i := range args {

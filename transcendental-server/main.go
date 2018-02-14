@@ -1,24 +1,29 @@
 package main
 
-import "fmt"
-import "net"
-import "log"
-import "time"
-
-//import "github.com/mqus/transcendental/srv"
+import (
+	"net"
+	"time"
+	"os"
+	"log"
+	"strings"
+	"fmt"
+)
 
 func main() {
-	log.Println("starting up transcendental-server v0.1")
-	fmt.Println(log.Prefix(), "Hi!")
-	//ln, err := net.Listen("tcp", ":19192")
-	addr, err := net.ResolveTCPAddr("tcp", ":19192")
+
+	addressString := parseArgs(os.Args)
+
+	log.Println("starting up transcendental-server v0.2")
+
+	addr, err := net.ResolveTCPAddr("tcp", addressString)
 	if err != nil {
 		log.Fatal(err)
 	}
 	ln, err := net.ListenTCP("tcp", addr)
 	if err != nil {
-		log.Fatal("Couldn't open port 19192! Details:", err)
+		log.Fatal("Couldn't open port ", addr.Port, "! Details:", err)
 	}
+	log.Println("listening on", ln.Addr())
 	defer ln.Close()
 	for {
 		conn, err := ln.AcceptTCP()
@@ -28,6 +33,29 @@ func main() {
 		go handleNewConnection(conn)
 	}
 
+}
+func parseArgs(args []string) string {
+	addressString := ":19192"
+	for i := range args {
+		if strings.HasPrefix(args[i], "--") {
+			switch args[i] {
+			case "-h":
+				fallthrough
+			case "--help":
+				fmt.Println("transcendental-server v0.2, a server application for synchronizing clipboards.\n" +
+					"Usage: transcendental-server [server:port] [flags]\n" +
+					"\t[server:port]\t The adress on which the server will listen on incoming connections (default: ':19192'" +
+					"\nFlags:\n" +
+					"\t--help\t-h\t print this dialog.")
+				os.Exit(0)
+			}
+			continue
+		} else {
+			addressString = args[i]
+		}
+
+	}
+	return addressString
 }
 func handleNewConnection(conn *net.TCPConn) {
 	conn.SetKeepAlive(true)
